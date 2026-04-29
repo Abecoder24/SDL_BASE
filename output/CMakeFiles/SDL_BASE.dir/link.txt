@@ -1,0 +1,1 @@
+/usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/SDL_BASE.dir/main.c.o -o SDL_BASE  -Wl,-rpath,/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output libSDL3_ttf.0.2.2.dylib libSDL3.0.dylib

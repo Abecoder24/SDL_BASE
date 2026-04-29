@@ -1,0 +1,13 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output/cmake_install.cmake",
+		"/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output/vendored/SDL/cmake_install.cmake",
+		"/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output/vendored/SDL_ttf/cmake_install.cmake",
+		"/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output/vendored/SDL_ttf/external/harfbuzz/cmake_install.cmake",
+		"/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output/vendored/SDL_ttf/external/freetype/cmake_install.cmake",
+		"/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output/vendored/SDL_ttf/external/plutovg/cmake_install.cmake",
+		"/Users/abrahamkonate/Documents/C_executable_Code/SDL_BASE/output/vendored/SDL_ttf/external/plutosvg/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
