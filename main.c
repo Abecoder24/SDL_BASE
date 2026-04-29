@@ -1,5 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <time.h>
+#include <stdlib.h>
 
 int main(int argv, char* argc[]) {
     //checking SDL.h init
@@ -31,9 +33,16 @@ int main(int argv, char* argc[]) {
 
     /// PART 1 FINISH but we have a problem we cant see our window or so we need a loop!
 
-    //loop
+  // x,y floats
     float x = 50;
     float y = 50;
+  // snake food
+   srand(time(NULL));
+    float sx = (rand () % 15)*50;
+    float sy = (rand() % 7)*50;
+
+
+    //loop
     bool running =true;
     SDL_Event event;
     while (running) {
@@ -77,11 +86,17 @@ int main(int argv, char* argc[]) {
                     default:
                         SDL_Log("This key is not mapped");
                 }
+                if (sx==x || sy==y ) {
+                    float sx = (rand () % 15)*50;
+                    float sy = (rand() % 7)*50;
+                }
             }
         } // lets change the color with setRenderColor(renderer, rd, grn, blu, visibility)
 
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
         SDL_RenderClear(renderer);
+
+
 
         //RECTANGLE/SQUARE
         // SDL_RenderRect(renderer, x,y,width, height) let save the last 4 arguments in a variable;
@@ -89,6 +104,13 @@ int main(int argv, char* argc[]) {
         SDL_SetRenderDrawColor (renderer, 0,0,0,255);
         SDL_RenderRect(renderer, &rect);
         SDL_RenderFillRect(renderer, &rect);
+
+
+        // snake food
+        SDL_FRect snakeRect = {sx, sy, 50, 50};
+        SDL_SetRenderDrawColor (renderer, 255,0,0,255);
+        SDL_RenderRect(renderer,&snakeRect);
+        SDL_RenderFillRect(renderer, &snakeRect);
 
 
         // now lets Present or show our painting!
