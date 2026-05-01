@@ -1,123 +1,140 @@
-#include <SDL3/SDL.h>
-#include <SDL3_ttf/SDL_ttf.h>
-#include <time.h>
-#include <stdlib.h>
 
-int main(int argv, char* argc[]) {
-    //checking SDL.h init
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("SDL.h initialisation Error, %s", SDL_GetError());
-        return -1;
-    }
+#include<SDL3/SDL.h>
+#include<stdbool.h>
 
-    //checking SDL_ttf.h init
-    if (!TTF_Init()) {
-        SDL_Log("SDL.h initialisation Error, %s", SDL_GetError());
-        return -1;
-    }
+// Preprocessor Directive
+// Make sure you don't teminate the lines
 
-    //Sucess
-    SDL_Log("Yes :) - SDL.h and SDL_ttf.h Initialized Successfully");
+#define CELL_SIZE 50
+#define GRID_WIDTH 20
+#define GRID_HEIGHT 14
+#define MAX_LENGTH (GRID_WIDTH * GRID_HEIGHT)
 
-    float screenHeight = 400;
-    float screenWidth = 800;
+// Custom Datatype
+typedef struct {
+    int x,y;
+}Segment;
 
-    //let create a window.
-    SDL_Window* window =SDL_CreateWindow("SDL WINDOW", screenWidth, screenHeight,0);
+typedef struct {
+    int length;
+    Segment body [MAX_LENGTH];
+} Snake;
 
-    // now that we have created our window(our canvas)  we need to painter which is RENDERER
+//Initialize Snake/Spawn Snake
 
-    //SDL_CreateRenderer(window, graphics)
-    SDL_Renderer * renderer = SDL_CreateRenderer(window, NULL);
-
-
-    /// PART 1 FINISH but we have a problem we cant see our window or so we need a loop!
-
-  // x,y floats
-    float x = 50;
-    float y = 50;
-  // snake food
-   srand(time(NULL));
-    float sx = (rand () % 15)*50;
-    float sy = (rand() % 7)*50;
-
-
-    //loop
-    bool running =true;
-    SDL_Event event;
-    while (running) {
-        // lets check for events
-        while (SDL_PollEvent(&event)) {
-            //check for the close event;
-            if (event.type==SDL_EVENT_QUIT) {
-                running = false;
-            }else if (event.type == SDL_EVENT_KEY_DOWN){
-
-                switch (event.key.scancode) {
-                    case SDL_SCANCODE_A:
-                        if (x>0) {
-                            x -= 50;
-                        } else {
-                            x =screenWidth -50;
-                        }
-                       break;
-                    case SDL_SCANCODE_D:
-                        if (x<screenWidth-50) {
-                            x += 50;
-                        } else {
-                            x =0;
-                        }
-                        break;
-                    case SDL_SCANCODE_W:
-                        if (y>0) {
-                            y -= 50;
-                        } else {
-                            y = screenHeight-50;
-                        }
-
-                        break;
-                    case SDL_SCANCODE_S:
-                        if (y <screenHeight -50) {
-                            y += 50;
-                        } else {
-                            y=0;
-                        }
-
-                    default:
-                        SDL_Log("This key is not mapped");
-                }
-                if (sx==x || sy==y ) {
-                    float sx = (rand () % 15)*50;
-                    float sy = (rand() % 7)*50;
-                }
-            }
-        } // lets change the color with setRenderColor(renderer, rd, grn, blu, visibility)
-
-        SDL_SetRenderDrawColor(renderer, 255,255,255,255);
-        SDL_RenderClear(renderer);
-
-
-
-        //RECTANGLE/SQUARE
-        // SDL_RenderRect(renderer, x,y,width, height) let save the last 4 arguments in a variable;
-        SDL_FRect rect = {x,y,50,50};
-        SDL_SetRenderDrawColor (renderer, 0,0,0,255);
-        SDL_RenderRect(renderer, &rect);
-        SDL_RenderFillRect(renderer, &rect);
-
-
-        // snake food
-        SDL_FRect snakeRect = {sx, sy, 50, 50};
-        SDL_SetRenderDrawColor (renderer, 255,0,0,255);
-        SDL_RenderRect(renderer,&snakeRect);
-        SDL_RenderFillRect(renderer, &snakeRect);
-
-
-        // now lets Present or show our painting!
-        SDL_RenderPresent(renderer);
-
-    }
-    // Close the window.
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+void initSnake(Snake* snake) {
+    //Set the length
+    snake->length=1;
+    //set the segment for the head
+    snake ->body[0].x = 0;
+    snake ->body[0].y = 0;
 }
+
+// Render Snake
+void renderSnake(SDL_Renderer * renderer, Snake* snake) {
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    //this will only render the head part of the segment
+    SDL_FRect rect = {
+       snake->body[0]. x * CELL_SIZE,
+       snake->body[0].y * CELL_SIZE,
+      w: CELL_SIZE,
+        h:CELL_SIZE
+    };
+    SDL_RenderFillRect(renderer,&rect);
+}
+
+//Handle Snake movements
+void handleSnakeMove(SDL_Event event, Snake* snake) {
+    switch (event.key.scancode){
+        case SDL_SCANCODE_W:
+            SDL_Log("GO UP");
+            snake ->body[0].y--;
+            break;
+        case SDL_SCANCODE_S:
+            SDL_Log("GO Down");
+            snake ->body[0].y--;
+            break;
+        case SDL_SCANCODE_A:
+            SDL_Log("GO Left");
+            snake ->body[0].y--;
+            break;
+        case SDL_SCANCODE_D:
+            SDL_Log("GO Right");
+            snake ->body[0].y--;
+            break;
+    }
+}
+
+//Default main function
+
+int main(int argc, char* argv[]) {
+    //creating a snake variable
+    //dataType varName = value;
+    Snake snake;
+
+    SDL_Window* window = SDL_CreateWindow("Snake Game", GRID_WIDTH*CELL_SIZE , GRID_HEIGHT*CELL_SIZE,0);
+    //create a SDL_Renderer
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+
+    // Change the window Background
+    SDL_SetRenderDrawColor(renderer, 233, 233,233,255);
+    // clear the window
+    SDL_RenderClear(renderer);
+
+    //Initialize snake
+    initSnake(&snake);
+
+    // render the snakezz
+    renderSnake(renderer, &snake);
+
+    //Present your Renderer
+    SDL_RenderPresent(renderer);
+
+  // loop to keep the window open
+    bool running = true;
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+
+
+        if (event.type == SDL_EVENT_QUIT) {
+            running =false;
+        } else if (event.type == SDL_EVENT_KEY_DOWN) {
+            handleSnakeMove(event, &snake);
+        }
+        }
+    } SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
