@@ -25,26 +25,55 @@ typedef struct {
 void initSnake(Snake* snake) {
     //Set the length
     snake->length=1;
-    //set the segment for the head
-    snake ->body[0].x = 0;
-    snake ->body[0].y = 0;
+    // //set the segment for the head
+    // snake ->body[0].x = 0;
+    // snake ->body[0].y = 0;
+
+    // Set teh segments position/dynamic
+    for (int i=0; i<snake->length; i++) {
+        snake ->body[i].x = snake->length - i;
+        snake ->body[i].y = 0;
+    }
 }
 
 // Render Snake
 void renderSnake(SDL_Renderer * renderer, Snake* snake) {
+    // Change the window Background
+    SDL_SetRenderDrawColor(renderer, 233, 233,233,255);
+    // clear the window
+    SDL_RenderClear(renderer);
+
+    //color for the Rectangle/SnakeSegment
     SDL_SetRenderDrawColor(renderer,0,0,0,255);
     //this will only render the head part of the segment
-    SDL_FRect rect = {
-       snake->body[0]. x * CELL_SIZE,
-       snake->body[0].y * CELL_SIZE,
-      w: CELL_SIZE,
-        h:CELL_SIZE
-    };
-    SDL_RenderFillRect(renderer,&rect);
-}
+    // SDL_FRect rect = {
+    //    snake->body[0]. x * CELL_SIZE,
+    //    snake->body[0].y * CELL_SIZE,
+    //     CELL_SIZE,
+    //     CELL_SIZE
+    // };
+    // SDL_RenderFillRect(renderer,&rect);
 
+    //Render the Dynamic/All snake Body segments
+    for (int i=0; i < snake->length; i++) {
+        SDL_FRect rect = {
+           snake->body[i]. x * CELL_SIZE,
+           snake->body[i].y * CELL_SIZE,
+            CELL_SIZE,
+            CELL_SIZE
+        };
+        SDL_RenderFillRect(renderer,&rect);
+
+    }
+}
 //Handle Snake movements
 void handleSnakeMove(SDL_Event event, Snake* snake) {
+    // Make the tail follow the head
+    for (int i = snake ->length -1; i> 0;i--) {
+        snake ->body[i].x = snake->body[i-1].x;
+        snake ->body[i].y = snake->body[i-1].y;
+
+    }
     switch (event.key.scancode){
         case SDL_SCANCODE_W:
             SDL_Log("GO UP");
@@ -52,16 +81,18 @@ void handleSnakeMove(SDL_Event event, Snake* snake) {
             break;
         case SDL_SCANCODE_S:
             SDL_Log("GO Down");
-            snake ->body[0].y--;
+            snake ->body[0].y++;
             break;
         case SDL_SCANCODE_A:
             SDL_Log("GO Left");
-            snake ->body[0].y--;
+            snake ->body[0].x--;
             break;
         case SDL_SCANCODE_D:
             SDL_Log("GO Right");
-            snake ->body[0].y--;
+            snake ->body[0].x++;
             break;
+        case SDL_SCANCODE_X:
+            snake ->length ++;
     }
 }
 
@@ -76,10 +107,7 @@ int main(int argc, char* argv[]) {
     //create a SDL_Renderer
     SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
 
-    // Change the window Background
-    SDL_SetRenderDrawColor(renderer, 233, 233,233,255);
-    // clear the window
-    SDL_RenderClear(renderer);
+
 
     //Initialize snake
     initSnake(&snake);
@@ -101,8 +129,13 @@ int main(int argc, char* argv[]) {
             running =false;
         } else if (event.type == SDL_EVENT_KEY_DOWN) {
             handleSnakeMove(event, &snake);
+            }
         }
-        }
+        // render the snakezz
+        renderSnake(renderer, &snake);
+
+        //Present your Renderer
+        SDL_RenderPresent(renderer);
     } SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
 
