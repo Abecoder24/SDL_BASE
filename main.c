@@ -1,4 +1,4 @@
-
+// version 1.1
 #include<SDL3/SDL.h>
 #include<stdbool.h>
 
